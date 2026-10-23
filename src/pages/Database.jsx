@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Database as DbIcon, Users, CreditCard, Building2, UserCircle, Table } from 'lucide-react';
 import { mockUser, mockTransactions } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function Database() {
+  const { user, userName, userEmail, userRole } = useAuth();
   const [activeTab, setActiveTab] = useState('customers');
 
   const tabs = [
@@ -57,12 +59,14 @@ export default function Database() {
               </thead>
               <tbody className="text-sm">
                 <tr className="border-b border-slate-100 hover:bg-slate-50">
-                  <td className="py-4 pr-4 font-mono text-slate-600">{mockUser.id}</td>
-                  <td className="py-4 pr-4 font-semibold text-slate-900">{mockUser.name}</td>
-                  <td className="py-4 pr-4 text-slate-600">{mockUser.email}</td>
-                  <td className="py-4 pr-4 text-slate-600">{mockUser.memberSince}</td>
+                  <td className="py-4 pr-4 font-mono text-slate-600">{user?.id ? user.id.slice(0, 8) + '...' : mockUser.id}</td>
+                  <td className="py-4 pr-4 font-semibold text-slate-900">{userName || mockUser.name}</td>
+                  <td className="py-4 pr-4 text-slate-600">{userEmail || mockUser.email}</td>
+                  <td className="py-4 pr-4 text-slate-600">October 2026</td>
                   <td className="py-4">
-                    <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">Active</span>
+                    <span className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                      {userRole === 'admin' ? 'Active Admin' : 'Active Customer'}
+                    </span>
                   </td>
                 </tr>
               </tbody>

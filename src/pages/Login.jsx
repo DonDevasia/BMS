@@ -1,169 +1,383 @@
 import React, { useState, useRef } from 'react';
-import { Building2, Lock, Mail, ArrowRight, ShieldCheck, Fingerprint } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { 
+  Building2, Lock, Mail, ArrowRight, ShieldCheck, Fingerprint, 
+  User, Phone, Sparkles, UserCheck, Shield
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
-export default function Login({ onLogin }) {
+export default function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  
+  const [mode, setMode] = useState('login'); // 'login' or 'signup'
+  const [step, setStep] = useState(1); // 1: Form, 2: OTP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [step, setStep] = useState(1); // 1: Login, 2: OTP
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [authenticatedUser, setAuthenticatedUser] = useState(null);
   const otpRefs = useRef([]);
+
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleOtpChange = (index, value) => {
     if (value.length > 1) value = value.slice(-1);
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-    if (value && index < 5) {
+    if (value && index < 5 && otpRefs.current[index + 1]) {
       otpRefs.current[index + 1].focus();
     }
   };
 
   const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === 'Backspace' && !otp[index] && index > 0 && otpRefs.current[index - 1]) {
       otpRefs.current[index - 1].focus();
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (step === 1) {
-      setStep(2);
-    } else {
-      onLogin();
+  const handleQuickFill = (name) => {
+    setError(null);
+    if (name === 'Ananya') {
+      setEmail('ananyababuraj23@gmail.com');
+      setPassword('Password@123');
+    } else if (name === 'John') {
+      setEmail('john@example.com');
+      setPassword('Password@123');
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (step === 1) {
+      setLoading(true);
+      setError(null);
+      try {
+        const endpoint = mode === 'login' ? '/api/login' : '/api/signup';
+        const bodyData = mode === 'login' 
+          ? { email: email.trim(), password, portal: 'customer' }
+          : { fullName: fullName.trim(), email: email.trim(), phone: phone.trim(), password, role: 'customer' };
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+        const data = await res.json();
+        
+        if (!res.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+        
+        // Save user to state until OTP step completes
+        setAuthenticatedUser(data.user);
+        setStep(2);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      // Step 2: Complete login with real user profile
+      if (authenticatedUser) {
+        login(authenticatedUser);
+      } else {
+        login({ full_name: 'Banking Customer', role: 'customer' });
+      }
+      navigate('/', { replace: true });
+    }
+  };
+
+  const handleBiometricMock = () => {
+    const dummyUser = { 
+      id: 'cust-1', 
+      full_name: fullName || 'Ananya', 
+      email: email || 'ananyababuraj23@gmail.com', 
+      role: 'customer' 
+    };
+    login(dummyUser);
+    navigate('/', { replace: true });
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-blue-200/50 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-indigo-100/60 rounded-full blur-3xl"></div>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center">
-        <div className="flex justify-center text-blue-600 mb-6">
-          <div className="w-16 h-16 bg-white rounded-2xl shadow-sm flex items-center justify-center border border-slate-100">
+        {/* Brand Icon */}
+        <div className="flex justify-center mb-4">
+          <div className="w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center border bg-white border-slate-100 text-blue-600 shadow-blue-100">
             <Building2 size={36} />
           </div>
         </div>
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">NexusBank</h2>
-        <p className="mt-2 text-sm text-slate-600">The future of smart banking</p>
+
+        <h2 className="text-3xl font-extrabold tracking-tight text-slate-900">
+          NexusBank
+        </h2>
+        <p className="mt-1 text-sm font-medium text-slate-600">
+          Next-Generation Smart Personal Banking
+        </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="bg-white py-8 px-4 shadow-xl sm:rounded-2xl sm:px-10 border border-slate-100 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
-          
-          <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Main Login Card */}
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-lg relative z-10">
+        <div className="bg-white py-8 px-6 sm:px-10 shadow-2xl rounded-3xl border border-slate-100 shadow-slate-200/50 text-slate-800 relative overflow-hidden">
+          {/* Top colored accent line */}
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-cyan-400 to-indigo-600"></div>
+
+          {/* Card Header */}
+          <div className="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                <UserCheck size={12} />
+                Customer Portal
+              </span>
+              <h3 className="text-xl font-bold mt-2 text-slate-900">
+                {mode === 'signup' ? 'Open Customer Account' : 'Sign In to Your Account'}
+              </h3>
+            </div>
+
+            {/* Quick Demo Fill Buttons */}
+            {step === 1 && (
+              <div className="flex flex-col gap-1 text-right">
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('Ananya')}
+                  className="text-xs text-blue-600 hover:text-blue-500 font-medium underline flex items-center gap-1 ml-auto"
+                >
+                  <Sparkles size={11} /> Fill Ananya
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickFill('John')}
+                  className="text-xs text-slate-500 hover:text-slate-700 font-medium underline flex items-center gap-1 ml-auto"
+                >
+                  Fill John
+                </button>
+              </div>
+            )}
+          </div>
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {step === 1 ? (
-              <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="space-y-4">
+                {error && (
+                  <div className="p-4 text-sm rounded-xl border bg-rose-50 text-rose-700 border-rose-200 flex items-start gap-3">
+                    <Shield size={18} className="shrink-0 mt-0.5 text-rose-500" />
+                    <div className="flex-1">
+                      <p className="font-semibold">Authentication Error</p>
+                      <p className="mt-0.5 text-xs opacity-90">{error}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Customer Sign Up Fields */}
+                {mode === 'signup' && (
+                  <>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Full Name
+                      </label>
+                      <div className="relative rounded-xl shadow-sm">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <User size={18} />
+                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={fullName}
+                          onChange={(e) => setFullName(e.target.value)}
+                          className="block w-full pl-11 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="e.g. Ananya Baburaj"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                        Mobile Phone
+                      </label>
+                      <div className="relative rounded-xl shadow-sm">
+                        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                          <Phone size={18} />
+                        </div>
+                        <input
+                          type="tel"
+                          required
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="block w-full pl-11 pr-4 py-3 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                          placeholder="+91 98765 43210"
+                        />
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Email Address */}
                 <div>
-                  <label className="block text-sm font-medium text-slate-700">Email address</label>
-                  <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-slate-400" />
+                  <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
+                    Email Address
+                  </label>
+                  <div className="relative rounded-xl shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <Mail size={18} />
                     </div>
                     <input
                       type="email"
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 border bg-slate-50 transition-colors"
-                      placeholder="alex.johnson@example.com"
+                      className="block w-full pl-11 pr-4 py-3 text-sm rounded-xl outline-none transition-all border bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="yourname@example.com"
                     />
                   </div>
                 </div>
 
-                <div className="mt-6">
-                  <label className="block text-sm font-medium text-slate-700">Password</label>
-                  <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-slate-400" />
+                {/* Password */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                      Password
+                    </label>
+                    {mode === 'login' && (
+                      <span className="text-xs text-slate-400 cursor-pointer hover:underline">
+                        Forgot?
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative rounded-xl shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                      <Lock size={18} />
                     </div>
                     <input
                       type="password"
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-slate-300 rounded-lg py-3 border bg-slate-50 transition-colors"
-                      placeholder="••••••••"
+                      className="block w-full pl-11 pr-4 py-3 text-sm rounded-xl outline-none transition-all border bg-slate-50 border-slate-200 text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="••••••••••••"
                     />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between mt-4">
-                  <div className="flex items-center">
-                    <input type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-slate-300 rounded" />
-                    <label className="ml-2 block text-sm text-slate-900">Remember me</label>
-                  </div>
-                  <div className="text-sm">
-                    <a href="#" className="font-medium text-blue-600 hover:text-blue-500">Forgot password?</a>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="animate-in fade-in slide-in-from-right-4 duration-300 space-y-6 text-center">
-                <div className="flex justify-center text-blue-600">
-                  <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
-                    <ShieldCheck size={32} />
+              /* OTP Step */
+              <div className="space-y-6 text-center py-2 animate-in fade-in duration-300">
+                <div className="flex justify-center">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-50 text-blue-600">
+                    <ShieldCheck size={36} />
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">Two-Factor Authentication</h3>
-                  <p className="text-sm text-slate-500 mt-2">Enter the 6-digit code sent to your registered mobile number ending in **67.</p>
+                  <h4 className="text-lg font-bold text-slate-900">
+                    Two-Factor Authorization (2FA)
+                  </h4>
+                  <p className="text-xs mt-1.5 text-slate-500">
+                    Enter the 6-digit verification code sent for{' '}
+                    <strong className="text-blue-600">
+                      {authenticatedUser?.full_name || email}
+                    </strong>
+                  </p>
                 </div>
-                
+
                 <div className="flex justify-center gap-2">
                   {otp.map((digit, index) => (
-                    <input 
+                    <input
                       key={index}
                       ref={(el) => (otpRefs.current[index] = el)}
-                      type="text" 
+                      type="text"
                       maxLength="1"
                       value={digit}
                       onChange={(e) => handleOtpChange(index, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-12 h-14 text-center text-xl font-bold border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-slate-50 outline-none"
+                      className="w-11 h-13 text-center text-xl font-bold rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                       placeholder="•"
                     />
                   ))}
                 </div>
+
+                <p className="text-xs text-slate-400">
+                  Demo tip: Click "Verify Security Token & Enter" to proceed immediately.
+                </p>
               </div>
             )}
 
-            <div>
+            {/* Submit Button */}
+            <div className="pt-2">
               <button
                 type="submit"
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors gap-2 items-center group"
+                disabled={loading}
+                className="w-full py-3.5 px-4 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 group bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25 disabled:opacity-50"
               >
-                {step === 1 ? 'Sign in securely' : 'Verify & Login'}
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                {step === 1 ? (
+                  loading ? (
+                    'Verifying credentials...'
+                  ) : mode === 'login' ? (
+                    'Sign In to Customer Banking'
+                  ) : (
+                    'Register Customer Account'
+                  )
+                ) : (
+                  'Verify Security Token & Enter'
+                )}
+                {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
               </button>
             </div>
-            
+
+            {/* Toggle Modes or Biometric */}
             {step === 1 && (
-              <div className="mt-6 border-t border-slate-200 pt-6">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="w-full flex justify-center py-3 px-4 border border-slate-300 rounded-xl shadow-sm text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors gap-2 items-center"
-                >
-                  <Fingerprint size={18} className="text-slate-400" />
-                  Sign in with Biometrics
-                </button>
+              <div className="pt-2 space-y-4">
+                <div className="text-center text-sm">
+                  {mode === 'login' ? (
+                    <p className="text-slate-500">
+                      New customer?{' '}
+                      <button
+                        type="button"
+                        onClick={() => { setMode('signup'); setError(null); }}
+                        className="font-semibold text-blue-600 hover:underline"
+                      >
+                        Create an account
+                      </button>
+                    </p>
+                  ) : (
+                    <p className="text-slate-500">
+                      Already have an account?{' '}
+                      <button
+                        type="button"
+                        onClick={() => { setMode('login'); setError(null); }}
+                        className="font-semibold text-blue-600 hover:underline"
+                      >
+                        Sign in
+                      </button>
+                    </p>
+                  )}
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                  <button
+                    type="button"
+                    onClick={handleBiometricMock}
+                    className="flex items-center gap-1.5 hover:underline"
+                  >
+                    <Fingerprint size={16} />
+                    Instant Biometric Access
+                  </button>
+                  <span className="flex items-center gap-1">
+                    <Lock size={12} /> 256-bit SSL Security
+                  </span>
+                </div>
               </div>
             )}
           </form>
         </div>
-      </div>
-      
-      <div className="mt-8 text-center text-xs text-slate-500 flex items-center justify-center gap-4 relative z-10">
-        <span className="flex items-center gap-1"><Lock size={12} /> Secure 256-bit Encryption</span>
-        <span>•</span>
-        <span>Terms of Service</span>
-        <span>•</span>
-        <span>Privacy Policy</span>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BrainCircuit, Check, X, AlertTriangle, Info, Zap } from 'lucide-react';
-import { mockUser } from '../data/mockData';
+import { BrainCircuit, Check, Info, Zap, RefreshCw } from 'lucide-react';
 
 export default function AiAssistant() {
   const [amount, setAmount] = useState('5000');

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { CreditCard, ShieldAlert, Settings, RefreshCw, Zap, Lock, Eye, EyeOff } from 'lucide-react';
 import { mockUser } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
 
 export default function SmartCard() {
+  const { userName } = useAuth();
   const card = mockUser.cards[0];
   const [showDetails, setShowDetails] = useState(false);
   const [emergencySwitch, setEmergencySwitch] = useState(card.emergencySwitch);
@@ -55,7 +57,7 @@ export default function SmartCard() {
               <div className="flex justify-between items-end font-mono text-sm uppercase">
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">Cardholder</p>
-                  <p>{card.cardholderName}</p>
+                  <p>{userName ? userName.toUpperCase() : card.cardholderName}</p>
                 </div>
                 <div>
                   <p className="text-[10px] text-slate-400 mb-1">Expires</p>
