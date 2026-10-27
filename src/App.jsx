@@ -22,8 +22,16 @@ const Bills = () => <div className="p-8 text-xl font-bold text-slate-800">Bills 
 const Settings = () => <div className="p-8 text-xl font-bold text-slate-800">Settings (WIP)</div>;
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -84,6 +92,8 @@ function AppRoutes() {
         <Route path="bills" element={<Bills />} />
         <Route path="database" element={<Database />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="customer/dashboard" element={<Navigate to="/" replace />} />
+        <Route path="admin/dashboard" element={<Navigate to="/" replace />} />
       </Route>
 
       {/* Fallback */}

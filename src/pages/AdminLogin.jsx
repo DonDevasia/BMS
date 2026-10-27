@@ -10,31 +10,11 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const [step, setStep] = useState(1); // 1: Form, 2: OTP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [authenticatedUser, setAuthenticatedUser] = useState(null);
-  const otpRefs = useRef([]);
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const handleOtpChange = (index, value) => {
-    if (value.length > 1) value = value.slice(-1);
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 5 && otpRefs.current[index + 1]) {
-      otpRefs.current[index + 1].focus();
-    }
-  };
-
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0 && otpRefs.current[index - 1]) {
-      otpRefs.current[index - 1].focus();
-    }
-  };
 
   const handleQuickFill = () => {
     setError(null);
@@ -44,39 +24,31 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (step === 1) {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: email.trim(), password, portal: 'admin' })
-        });
-        const data = await res.json();
-        
-        if (!res.ok) {
-          throw new Error(data.error || 'Authentication failed');
-        }
-        
-        // Ensure the account has administrator privileges
-        if (data.user?.role !== 'admin') {
-          throw new Error('Access Denied: This account lacks administrative clearance.');
-        }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password, portal: 'admin' })
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || data.message || 'Authentication failed');
+      }
+      
+      // Ensure the account has administrator privileges
+      if (data.user?.role !== 'admin') {
+        throw new Error('Access Denied: This account lacks administrative clearance.');
+      }
 
-        setAuthenticatedUser({ token: data.token, ...data.user });
-        setStep(2);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    } else {
-      // Step 2: Complete admin sign-in
-      if (authenticatedUser) {
-        login(authenticatedUser.token, authenticatedUser);
-      }
-      navigate('/admin/dashboard', { replace: true });
+      login(data.token, data.user);
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -124,21 +96,18 @@ export default function AdminLogin() {
             </div>
 
             {/* Quick Demo Admin Button */}
-            {step === 1 && (
-              <button
-                type="button"
-                onClick={handleQuickFill}
-                className="text-xs text-amber-400 hover:text-amber-300 font-medium underline flex items-center gap-1 ml-auto"
-                title="Fill demo admin credentials"
-              >
-                <Sparkles size={12} /> Demo Admin
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleQuickFill}
+              className="text-xs text-amber-400 hover:text-amber-300 font-medium underline flex items-center gap-1 ml-auto"
+              title="Fill demo admin credentials"
+            >
+              <Sparkles size={12} /> Demo Admin
+            </button>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {step === 1 ? (
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {error && (
                   <div className="p-4 text-sm rounded-xl border bg-rose-950/70 text-rose-300 border-rose-800 flex items-start gap-3">
                     <ShieldAlert size={18} className="shrink-0 mt-0.5 text-rose-500" />
@@ -194,47 +163,6 @@ export default function AdminLogin() {
                   </div>
                 </div>
               </div>
-            ) : (
-              /* OTP Step */
-              <div className="space-y-6 text-center py-2 animate-in fade-in duration-300">
-                <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-indigo-900/40 text-amber-400 border border-amber-400/20">
-                    <ShieldCheck size={36} />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-white">
-                    Administrator Security Token (2FA)
-                  </h4>
-                  <p className="text-xs mt-1.5 text-slate-400">
-                    Enter the authorized 6-digit cryptographic security code for{' '}
-                    <strong className="text-amber-300">
-                      {authenticatedUser?.full_name || email}
-                    </strong>
-                  </p>
-                </div>
-
-                <div className="flex justify-center gap-2">
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => (otpRefs.current[index] = el)}
-                      type="text"
-                      maxLength="1"
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-11 h-13 text-center text-xl font-bold rounded-xl border border-slate-700 bg-slate-950 text-white focus:border-amber-400 focus:ring-1 focus:ring-amber-400 outline-none transition-all"
-                      placeholder="•"
-                    />
-                  ))}
-                </div>
-
-                <p className="text-xs text-slate-400">
-                  Demo tip: Click "Authorize & Access Terminal" to proceed.
-                </p>
-              </div>
-            )}
 
             {/* Submit Button */}
             <div className="pt-2">
@@ -243,15 +171,7 @@ export default function AdminLogin() {
                 disabled={loading}
                 className="w-full py-3.5 px-4 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 group bg-gradient-to-r from-amber-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white shadow-indigo-950/50 disabled:opacity-50"
               >
-                {step === 1 ? (
-                  loading ? (
-                    'Verifying credentials...'
-                  ) : (
-                    'Sign In as Administrator'
-                  )
-                ) : (
-                  'Authorize & Access Terminal'
-                )}
+                {loading ? 'Authenticating...' : 'Sign In as Administrator'}
                 {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
               </button>
             </div>

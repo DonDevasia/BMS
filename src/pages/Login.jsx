@@ -11,33 +11,15 @@ export default function Login() {
   const { login } = useAuth();
   
   const [mode, setMode] = useState('login'); // 'login' or 'signup'
-  const [step, setStep] = useState(1); // 1: Form, 2: OTP
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [authenticatedUser, setAuthenticatedUser] = useState(null);
-  const otpRefs = useRef([]);
 
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const handleOtpChange = (index, value) => {
-    if (value.length > 1) value = value.slice(-1);
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    if (value && index < 5 && otpRefs.current[index + 1]) {
-      otpRefs.current[index + 1].focus();
-    }
-  };
 
-  const handleOtpKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0 && otpRefs.current[index - 1]) {
-      otpRefs.current[index - 1].focus();
-    }
-  };
 
   const handleQuickFill = (name) => {
     setError(null);
@@ -52,58 +34,52 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (step === 1) {
-      setLoading(true);
-      setError(null);
-      try {
-        const endpoint = mode === 'login' ? '/api/login' : '/api/signup';
-        const bodyData = mode === 'login' 
-          ? { email: email.trim(), password, portal: 'customer' }
-          : { fullName: fullName.trim(), email: email.trim(), phone: phone.trim(), password, role: 'customer' };
+    setLoading(true);
+    setError(null);
+    try {
+      const endpoint = mode === 'login' ? '/api/login' : '/api/signup';
+      const bodyData = mode === 'login' 
+        ? { email: email.trim(), password, portal: 'customer' }
+        : { fullName: fullName.trim(), email: email.trim(), phone: phone.trim(), password, role: 'customer' };
 
-        const res = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyData)
-        });
-        const data = await res.json();
-        
-        if (!res.ok) {
-          throw new Error(data.error || 'Authentication failed');
-        }
-        
-        // Save user & token to state until OTP step completes
-        setAuthenticatedUser({ token: data.token, ...data.user });
-        setStep(2);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData)
+      });
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || data.message || 'Authentication failed');
       }
-    } else {
-      // Step 2: Complete login with real user profile
-      if (authenticatedUser) {
-        login(authenticatedUser.token, authenticatedUser);
-      }
-      navigate('/customer/dashboard', { replace: true });
+      
+      // Directly activate session and navigate to dashboard
+      login(data.token, data.user);
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleBiometricMock = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email || 'ananyababuraj23@gmail.com', portal: 'customer' })
       });
       const data = await res.json();
-      if (data.success && data.token) {
-        login(data.token, data.user);
-        navigate('/customer/dashboard', { replace: true });
+      if (!res.ok) {
+        throw new Error(data.error || data.message || 'Biometric access failed');
       }
+      login(data.token, data.user);
+      navigate('/', { replace: true });
     } catch (err) {
-      console.error(err);
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -152,29 +128,26 @@ export default function Login() {
             </div>
 
             {/* Quick Demo Fill Buttons */}
-            {step === 1 && (
-              <div className="flex flex-col gap-1 text-right">
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('Ananya')}
-                  className="text-xs text-blue-600 hover:text-blue-500 font-medium underline flex items-center gap-1 ml-auto"
-                >
-                  <Sparkles size={11} /> Fill Ananya
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickFill('John')}
-                  className="text-xs text-slate-500 hover:text-slate-700 font-medium underline flex items-center gap-1 ml-auto"
-                >
-                  Fill John
-                </button>
-              </div>
-            )}
+            <div className="flex flex-col gap-1 text-right">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('Ananya')}
+                className="text-xs text-blue-600 hover:text-blue-500 font-medium underline flex items-center gap-1 ml-auto"
+              >
+                <Sparkles size={11} /> Fill Ananya
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('John')}
+                className="text-xs text-slate-500 hover:text-slate-700 font-medium underline flex items-center gap-1 ml-auto"
+              >
+                Fill John
+              </button>
+            </div>
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
-            {step === 1 ? (
-              <div className="space-y-4">
+            <div className="space-y-4">
                 {error && (
                   <div className="p-4 text-sm rounded-xl border bg-rose-50 text-rose-700 border-rose-200 flex items-start gap-3">
                     <Shield size={18} className="shrink-0 mt-0.5 text-rose-500" />
@@ -275,47 +248,6 @@ export default function Login() {
                   </div>
                 </div>
               </div>
-            ) : (
-              /* OTP Step */
-              <div className="space-y-6 text-center py-2 animate-in fade-in duration-300">
-                <div className="flex justify-center">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-blue-50 text-blue-600">
-                    <ShieldCheck size={36} />
-                  </div>
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-slate-900">
-                    Two-Factor Authorization (2FA)
-                  </h4>
-                  <p className="text-xs mt-1.5 text-slate-500">
-                    Enter the 6-digit verification code sent for{' '}
-                    <strong className="text-blue-600">
-                      {authenticatedUser?.full_name || email}
-                    </strong>
-                  </p>
-                </div>
-
-                <div className="flex justify-center gap-2">
-                  {otp.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => (otpRefs.current[index] = el)}
-                      type="text"
-                      maxLength="1"
-                      value={digit}
-                      onChange={(e) => handleOtpChange(index, e.target.value)}
-                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                      className="w-11 h-13 text-center text-xl font-bold rounded-xl border border-slate-300 bg-slate-50 text-slate-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
-                      placeholder="•"
-                    />
-                  ))}
-                </div>
-
-                <p className="text-xs text-slate-400">
-                  Demo tip: Click "Verify Security Token & Enter" to proceed immediately.
-                </p>
-              </div>
-            )}
 
             {/* Submit Button */}
             <div className="pt-2">
@@ -324,24 +256,19 @@ export default function Login() {
                 disabled={loading}
                 className="w-full py-3.5 px-4 rounded-xl text-sm font-bold shadow-lg transition-all flex items-center justify-center gap-2 group bg-blue-600 hover:bg-blue-700 text-white shadow-blue-500/25 disabled:opacity-50"
               >
-                {step === 1 ? (
-                  loading ? (
-                    'Verifying credentials...'
-                  ) : mode === 'login' ? (
-                    'Sign In to Customer Banking'
-                  ) : (
-                    'Register Customer Account'
-                  )
+                {loading ? (
+                  'Signing in...'
+                ) : mode === 'login' ? (
+                  'Sign In to Customer Banking'
                 ) : (
-                  'Verify Security Token & Enter'
+                  'Register Customer Account'
                 )}
                 {!loading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />}
               </button>
             </div>
 
             {/* Toggle Modes or Biometric */}
-            {step === 1 && (
-              <div className="pt-2 space-y-4">
+            <div className="pt-2 space-y-4">
                 <div className="text-center text-sm">
                   {mode === 'login' ? (
                     <p className="text-slate-500">
@@ -382,7 +309,6 @@ export default function Login() {
                   </span>
                 </div>
               </div>
-            )}
           </form>
         </div>
       </div>

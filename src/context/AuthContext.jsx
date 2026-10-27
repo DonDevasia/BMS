@@ -123,13 +123,17 @@ export function AuthProvider({ children }) {
   const customerId = user?.customer_id || null;
   const userAvatar = user?.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=${isAdmin ? '4f46e5' : '2563eb'}&color=fff&bold=true`;
 
+  const hasToken = Boolean(token || (typeof window !== 'undefined' && localStorage.getItem('nexus_token')));
+  const hasUser = Boolean(user || (typeof window !== 'undefined' && localStorage.getItem('user')));
+  const isAuthenticated = hasToken && hasUser;
+
   return (
     <AuthContext.Provider
       value={{
         token,
         user,
         loading,
-        isAuthenticated: !!user && !!token,
+        isAuthenticated,
         login,
         logout,
         authFetch,

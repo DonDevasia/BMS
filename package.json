@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -n \"client,server\" -c \"cyan,magenta\" \"vite\" \"node server/index.js\"",
+    "client": "vite",
     "server": "node server/index.js",
     "build": "vite build",
     "lint": "oxlint",
@@ -26,6 +27,7 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "autoprefixer": "^10.6.1",
+    "concurrently": "^10.0.6",
     "oxlint": "^1.81.0",
     "postcss": "^8.5.28",
     "tailwindcss": "^4.3.3",

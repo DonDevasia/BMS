@@ -1,5 +1,325 @@
 [
   {
+    "log_id": "audit-1793118596546-kb0zl",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T16:29:56.546Z"
+  },
+  {
+    "log_id": "audit-1793118547910-aw68s",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T16:29:07.910Z"
+  },
+  {
+    "log_id": "audit-1793118037733-yvk1f",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T16:20:37.733Z"
+  },
+  {
+    "log_id": "audit-1793118020270-vgg0e",
+    "actor_id": "09215785-e81d-4bce-9b10-e13445bd9203",
+    "actor_email": "john@example.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "john@example.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T16:20:20.270Z"
+  },
+  {
+    "log_id": "audit-1793117160584-4y8zr",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T16:06:00.584Z"
+  },
+  {
+    "log_id": "audit-1793116465550-n3fa4",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:54:25.550Z"
+  },
+  {
+    "log_id": "audit-1793115934742-ov8bq",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:45:34.742Z"
+  },
+  {
+    "log_id": "audit-1793115904458-20mh3",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:45:04.458Z"
+  },
+  {
+    "log_id": "audit-1793115567785-oetzr",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:39:27.785Z"
+  },
+  {
+    "log_id": "audit-1793115432223-swmpf",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:37:12.223Z"
+  },
+  {
+    "log_id": "audit-1793115349755-tu7de",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:35:49.755Z"
+  },
+  {
+    "log_id": "audit-1793115334053-isi4v",
+    "actor_id": "09215785-e81d-4bce-9b10-e13445bd9203",
+    "actor_email": "john@example.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "john@example.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:35:34.053Z"
+  },
+  {
+    "log_id": "audit-1793115325483-rd7v1",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:35:25.483Z"
+  },
+  {
+    "log_id": "audit-1793115316732-7z7ia",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:35:16.732Z"
+  },
+  {
+    "log_id": "audit-1793115198066-k8rkf",
+    "actor_id": "09215785-e81d-4bce-9b10-e13445bd9203",
+    "actor_email": "john@example.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "john@example.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:33:18.066Z"
+  },
+  {
+    "log_id": "audit-1793115183979-0cifp",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:33:03.979Z"
+  },
+  {
+    "log_id": "audit-1793115110571-jany9",
+    "actor_id": "09215785-e81d-4bce-9b10-e13445bd9203",
+    "actor_email": "john@example.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "john@example.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:31:50.571Z"
+  },
+  {
+    "log_id": "audit-1793115109150-jnsui",
+    "actor_id": "71ce444b-8e1d-41eb-aef4-57ba2fe62300",
+    "actor_email": "admin@nexusbank.com",
+    "actor_role": "admin",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "admin",
+      "email": "admin@nexusbank.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:31:49.150Z"
+  },
+  {
+    "log_id": "audit-1793115097542-ra8kn",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:31:37.542Z"
+  },
+  {
+    "log_id": "audit-1793114922463-nkyfj",
+    "actor_id": "d3b8668c-0d9b-488c-b0b9-9d0c96fbe29a",
+    "actor_email": "ananyababuraj23@gmail.com",
+    "actor_role": "customer",
+    "action": "LOGIN_SUCCESS",
+    "target_type": null,
+    "target_id": null,
+    "details": {
+      "portal": "customer",
+      "email": "ananyababuraj23@gmail.com"
+    },
+    "ip_address": "::1",
+    "status": "success",
+    "created_at": "2026-10-27T15:28:42.463Z"
+  },
+  {
     "log_id": "audit-1792817328234-jzcyh",
     "actor_id": "09215785-e81d-4bce-9b10-e13445bd9203",
     "actor_email": "john@example.com",

@@ -13,7 +13,7 @@ const {
 } = require('./notificationService');
 
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const JWT_SECRET = process.env.JWT_SECRET || 'nexusbank-secure-jwt-key-2026-production';
 
 app.use(cors());
@@ -1556,10 +1556,6 @@ app.post('/api/withdraw', async (req, res) => {
   res.json({ success: true, new_balance: data });
 });
 
-if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  app.listen(port, () => {
-    console.log(`NexusBank Core Server running on port ${port}`);
-  });
-}
-
-module.exports = app;
+app.listen(port, () => {
+  console.log(`NexusBank Core Server running on port ${port}`);
+});
