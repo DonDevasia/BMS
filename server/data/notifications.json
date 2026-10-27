@@ -1,0 +1,56 @@
+[
+  {
+    "notification_id": "notif-1792817328542-chxhc",
+    "customer_id": "25ff3000-6e01-40b1-b862-896c397a7a7e",
+    "title": "Credit Received",
+    "message": "₹50 received from A/C 1000200030004000. Ref: TRF-20261024044812-6786",
+    "type": "success",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:48.542Z"
+  },
+  {
+    "notification_id": "notif-1792817328385-nc522",
+    "customer_id": "db0e4ee6-821f-4342-9ec0-9f17f2231c24",
+    "title": "Funds Transferred",
+    "message": "₹50 transferred to A/C 1000200030005002. Ref: TRF-20261024044812-6786",
+    "type": "info",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:48.385Z"
+  },
+  {
+    "notification_id": "notif-1792817308258-55yn4",
+    "customer_id": "db0e4ee6-821f-4342-9ec0-9f17f2231c24",
+    "title": "Credit Received",
+    "message": "₹50 received from A/C 1000200030005002. Ref: TRF-20261024044752-6906",
+    "type": "success",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:28.258Z"
+  },
+  {
+    "notification_id": "notif-1792817308113-z5bt2",
+    "customer_id": "25ff3000-6e01-40b1-b862-896c397a7a7e",
+    "title": "Funds Transferred",
+    "message": "₹50 transferred to A/C 1000200030004000. Ref: TRF-20261024044752-6906",
+    "type": "info",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:28.113Z"
+  },
+  {
+    "notification_id": "notif-1792817306557-vitgh",
+    "customer_id": "25ff3000-6e01-40b1-b862-896c397a7a7e",
+    "title": "Withdrawal Alert",
+    "message": "₹100 was debited from A/C 1000200030005002.",
+    "type": "warning",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:26.557Z"
+  },
+  {
+    "notification_id": "notif-1792817305679-kja0x",
+    "customer_id": "25ff3000-6e01-40b1-b862-896c397a7a7e",
+    "title": "Deposit Successful",
+    "message": "₹100 has been successfully deposited into A/C 1000200030005002.",
+    "type": "success",
+    "is_read": false,
+    "created_at": "2026-10-24T04:48:25.679Z"
+  }
+]

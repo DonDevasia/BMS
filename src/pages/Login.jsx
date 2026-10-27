@@ -72,8 +72,8 @@ export default function Login() {
           throw new Error(data.error || 'Authentication failed');
         }
         
-        // Save user to state until OTP step completes
-        setAuthenticatedUser(data.user);
+        // Save user & token to state until OTP step completes
+        setAuthenticatedUser({ token: data.token, ...data.user });
         setStep(2);
       } catch (err) {
         setError(err.message);
@@ -83,23 +83,30 @@ export default function Login() {
     } else {
       // Step 2: Complete login with real user profile
       if (authenticatedUser) {
-        login(authenticatedUser);
-      } else {
-        login({ full_name: 'Banking Customer', role: 'customer' });
+        login(authenticatedUser.token, authenticatedUser);
       }
-      navigate('/', { replace: true });
+      navigate('/customer/dashboard', { replace: true });
     }
   };
 
-  const handleBiometricMock = () => {
-    const dummyUser = { 
-      id: 'cust-1', 
-      full_name: fullName || 'Ananya', 
-      email: email || 'ananyababuraj23@gmail.com', 
-      role: 'customer' 
-    };
-    login(dummyUser);
-    navigate('/', { replace: true });
+  const handleBiometricMock = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email || 'ananyababuraj23@gmail.com', portal: 'customer' })
+      });
+      const data = await res.json();
+      if (data.success && data.token) {
+        login(data.token, data.user);
+        navigate('/customer/dashboard', { replace: true });
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

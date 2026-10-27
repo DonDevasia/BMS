@@ -64,7 +64,7 @@ export default function AdminLogin() {
           throw new Error('Access Denied: This account lacks administrative clearance.');
         }
 
-        setAuthenticatedUser(data.user);
+        setAuthenticatedUser({ token: data.token, ...data.user });
         setStep(2);
       } catch (err) {
         setError(err.message);
@@ -74,11 +74,9 @@ export default function AdminLogin() {
     } else {
       // Step 2: Complete admin sign-in
       if (authenticatedUser) {
-        login(authenticatedUser);
-      } else {
-        login({ full_name: 'Nexus Admin', role: 'admin', email: 'admin@nexusbank.com' });
+        login(authenticatedUser.token, authenticatedUser);
       }
-      navigate('/', { replace: true });
+      navigate('/admin/dashboard', { replace: true });
     }
   };
 

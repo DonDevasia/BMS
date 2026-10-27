@@ -265,3 +265,33 @@ BEGIN
     RETURN TRUE;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Audit Logs table
+CREATE TABLE IF NOT EXISTS audit_logs (
+  log_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  actor_id UUID REFERENCES profiles(id),
+  actor_email TEXT,
+  actor_role TEXT,
+  action TEXT NOT NULL,
+  target_type TEXT,
+  target_id TEXT,
+  details JSONB,
+  ip_address TEXT,
+  status TEXT DEFAULT 'success',
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+  notification_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  customer_id UUID REFERENCES customers(customer_id),
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  type TEXT DEFAULT 'info', -- 'info', 'success', 'warning', 'alert'
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX IF NOT EXISTS idx_notifications_customer_id ON notifications(customer_id);
+
